@@ -1,40 +1,23 @@
 import * as elements from "typed-html";
-import { TodoForm, TodoList } from "../components/Todos";
-
-import { db } from "../db";
-import { todos as Todos } from "../db/schema";
-import hello from "../components/hello";
 import { Main } from "../layouts/main";
-// import { Router } from "..";
-// import { Router } from "..";
+import { db } from "../db";
+import { todos } from "../db/schema";
+import todosAsync from "../components/todosAsync";
+import { TodoList } from "../components/Todos";
+import { Link } from "../components/link";
 
-
-
-// export const SERVER = async() => {
-//     const todos = await db.select().from(Todos).all();
-//     // const Todo = () => <TodoList todos={todos}/>
-//     return todos
-// }
 export default async () =>
 {
-
-    // const server = console.log(<Hello/>)
-    // const todos = await db.select().from( Todos ).all();
-    // const Todo = () => <TodoList todos={ todos } />;
-
-    // const divs = () => <div>rendering hello</div>
-    // const renderHello = await hello(HelloRenderer())
-    // console.log(renderHello);
-
-    // 
-    // const Heller = (await Hello())
-    // console.log( Router );
-
+    const data = await db.select().from( todos ).all();
     return (
         <Main>
             <div class="bg-gray-100">
-                <div>
-                    {/* <TodoList todos={ todos } /> */ }
+                <div id="asyncTest">
+                <Link to="/one"/>
+                    {/* async components must be used this way */ }
+                    <div>{ await todosAsync() }</div>
+                    {/* normal components can be delcared this way */}
+                    <div><TodoList todos={data}/></div>
                 </div>
                 <header class="bg-blue-500 py-4">
                     <div class="container mx-auto text-white text-center">
@@ -67,9 +50,3 @@ export default async () =>
         </Main>
     );
 };
-
-const HelloRenderer = () =>
-{
-    return ( <div>rendering heller</div> );
-}
-

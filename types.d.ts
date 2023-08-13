@@ -2,6 +2,7 @@ declare namespace JSX {
   /**
    * Represents an HTML tag with special attributes.
    */
+  // type router = "/" | "/one";
   interface HtmlTag {
       /**
        * Description: Boosts or removes progressive enhancement for links and forms.

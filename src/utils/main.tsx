@@ -1,8 +1,8 @@
 import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import * as elements from "typed-html";
-import { db } from "./db";
-import { Todo, todos } from "./db/schema";
+import { db } from "../db";
+import { Todo, todos } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const app = new Elysia()
@@ -14,7 +14,7 @@ const app = new Elysia()
       <BaseHtml>
         <body
           class="flex w-full h-screen justify-center items-center"
-          hx-get=""
+          hx-get="/"
           hx-swap="innerHTML"
           hx-trigger="load"
         />

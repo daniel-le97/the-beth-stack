@@ -1,6 +1,6 @@
-/*
-! tailwindcss v3.3.3 | MIT License | https://tailwindcss.com
-*/
+/* dont delete this, we are using this to generate tailwind classes*/
+
+/* ! tailwindcss v3.3.3 | MIT License | https://tailwindcss.com*/
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -658,6 +658,10 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-auto {
+  background-size: auto;
 }
 
 .p-4 {

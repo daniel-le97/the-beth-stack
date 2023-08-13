@@ -1,0 +1,4 @@
+/* dont delete this, we are using this to generate tailwind classes*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,72 +1,70 @@
-import html from "@elysiajs/html";
+import { html } from "@elysiajs/html";
 // import { FileSystemRouter } from "bun";
 import Elysia from "elysia";
 import { Main } from "./layouts/main";
 import * as elements from 'typed-html'
-// import { routerKeys } from "./router";
-import { inline, install } from '@twind/core'
 
-import { Router } from "./router";
-import { buildRouter } from "../build";
+import { copyFile, existsSync, rmSync, statSync } from "fs";
+import * as path from 'path';
 
-// impot 
-// const twinder = install(config)
+const PROJECT_ROOT = import.meta.dir;
+// const PUBLIC_DIR = path.resolve(PROJECT_ROOT, "public");
+const BUILD_DIR = path.resolve( PROJECT_ROOT, "dist" );
+const buildExist = existsSync( BUILD_DIR )
 
+const { routes: router } = new Bun.FileSystemRouter( {
+    style: 'nextjs',
+    dir: './src/pages'
+} );
 
+if (!(await Bun.file( './src/utils/router.ts' ).exists()))
+{
+      const routeExporter = `export const router = [${[...Object.keys( router ).map( route => `"${ route }"` )]}] as const\nexport type Router = typeof router[number]`
+      await Bun.write( './src/utils/router.ts', routeExporter );
+    }
+    
+    let entry = [ ...Object.values( router ), './src/index.tsx' ]
+    if (!buildExist)
+    {
+        const build = await Bun.build( {
+            entrypoints: entry ? entry : [ './src/index.tsx' ],
+            outdir: BUILD_DIR,
+            minify: true,
+            splitting: true,
+            // plugins: [dts()]
+          } );
 
-// export const { routes: router } = new Bun.FileSystemRouter({
-//     style: 'nextjs',
-//     dir: './src/pages'
-// })
+    }
+    //   rmSync( BUILD_DIR, { recursive: true } );
+// const build = await Bun.build( {
+//   entrypoints: entry ? entry : [ './src/index.tsx' ],
+//   outdir: BUILD_DIR,
+//   minify: true,
+//   splitting: true,
+//   // plugins: [dts()]
+// } );
 
-// const routerExporter = `export type Router = ${Object.keys(router).map( route => `"${route}"`).join(" | ")}`
-// await Bun.write('./src/router.ts', routerExporter);
+const buildRouter = new Bun.FileSystemRouter( {
+  style: 'nextjs',
+  dir: BUILD_DIR + '/src/pages'
+} ).routes;
 
-
-
-// const routerCode = JSON.stringify(router, null, 2); // Convert router object to a formatted JSON string
-
-// const code = `
-// export const routerKeys = ${routerCode};
-
-// // export type Router = keyof typeof router;
-
-
-// `;
-
-
-
-// export type Router = keyof typeof routerKeys;
-
-const fsRouter = async() => {
-
-    // app.use(html())
-    // @ts-ignore
+const fsRouter = async () =>
+{
     const app = new Elysia().use(html())
-    app.get("/styles.css", () => Bun.file( import.meta.dir + "/public/styles.css"))
-    app.get('/index.js', () => Bun.file( import.meta.dir + '/public/index.js'))
-    app.get('/twind.js', () => Bun.file( import.meta.dir + '/public/twind.js'))
-    // const { routes } = new Bun.FileSystemRouter({
-    //     style: 'nextjs',
-    //     dir: './src/pages'
-    // })
-    // const mainHtml = (await Bun.file( import.meta.dir + '/public/index.html').text())
-    for await(const [route, path] of Object.entries(buildRouter)) {
+    const publicDir = import.meta.dir + '/public';
+    app.get( "/styles.css", () => Bun.file( publicDir + "/styles.css" ) );
+    app.get( '/index.js', () => Bun.file( publicDir + '/index.js' ) )
+    for await(const [route, path] of Object.entries(router)) {
         const importPage = await import(path)
         let Page = importPage.default
         const isAsync = Page.toString().includes('async')
         const renderedPage = isAsync ? await Page() : <Page />;
-
-        // const styledPage = inline(renderedPage, twinder)
-        // console.log({styledPage, renderedPage});
-        
-        // @ts-ignore
-        app.get(route, ({html}) => html(renderedPage))
-
+        // @ts-ignore html is there
+        app.get( route, ( { html } ) => html( renderedPage ) )
     }
     return app
 }
-
 
 const app = new Elysia()
 // @ts-ignore
