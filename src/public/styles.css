@@ -660,10 +660,6 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-auto {
-  background-size: auto;
-}
-
 .p-4 {
   padding: 1rem;
 }
